@@ -1,8 +1,25 @@
-INSERT INTO user (username, password)
-VALUES
-  ('test', 'pbkdf2:sha256:50000$TCI4GzcX$0de171a4f4dac32e3364c7ddc7c14f3e2fa61f2d17574483f7ffbb431b4acb2f'),
-  ('other', 'pbkdf2:sha256:50000$kJPKsz6N$d2d4784f1b030a9761f5ccaeeaca413f27f2ecb76d6168407af962ddce849f79');
+INSERT INTO users (id, email) VALUES (1, 'user1@gmail.com');
 
-INSERT INTO post (title, body, author_id, created)
-VALUES
-  ('test title', 'test' || x'0a' || 'body', 1, '2018-01-01 00:00:00');
+-- INSERT INTO questions (id, question) VALUES (1, 'How much do you like cars?');
+-- INSERT INTO questions (id, question) VALUES (2, 'How much do you like cars?');
+-- INSERT INTO questions (id, question) VALUES (3, 'How much do you like halo?');
+-- INSERT INTO questions (id, question) VALUES (4, 'How much do you like mario?');
+-- INSERT INTO questions (id, question) VALUES (5, 'How much do you like pizza?');
+-- INSERT INTO questions (id, question) VALUES (6, 'How much do you like vegetables?');
+-- INSERT INTO questions (id, question) VALUES (7, 'How much do you like bikes?');
+
+INSERT INTO users (id, email) VALUES (1, 'user1@gmail.com');
+
+INSERT INTO posters (id, name, qr_id, qr_value) VALUES (1, '''RN Association''', '''qr1234''', NULL);
+
+INSERT INTO users_posters (id, users_id, posters_id) VALUES (1, 1, 1);
+
+INSERT INTO surveys (id, comment, users_posters_id) VALUES (1, '''user 1 poster 1''', 1);
+
+INSERT INTO answers (id, answer, questions_id, surveys_id) VALUES (1, 5, 1, 1);
+INSERT INTO answers (id, answer, questions_id, surveys_id) VALUES (2, 6, 2, 1);
+INSERT INTO answers (id, answer, questions_id, surveys_id) VALUES (3, 3, 3, 1);
+INSERT INTO answers (id, answer, questions_id, surveys_id) VALUES (4, 5, 4, 1);
+INSERT INTO answers (id, answer, questions_id, surveys_id) VALUES (5, 4, 5, 1);
+INSERT INTO answers (id, answer, questions_id, surveys_id) VALUES (6, 1, 6, 1);
+INSERT INTO answers (id, answer, questions_id, surveys_id) VALUES (7, 2, 7, 1);
