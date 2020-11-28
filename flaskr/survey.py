@@ -4,16 +4,17 @@ from flask import (
 from werkzeug.exceptions import abort
 from flaskr.db import get_db
 
-bp = Blueprint('blog', __name__)
+bp = Blueprint('survey', __name__)
 
 @bp.route('/')
 def index():
     db = get_db()
-    posts = db.execute(
+    surveys = db.execute(
         'SELECT id, question'
         ' FROM questions'
+        ' ORDER BY id'
     ).fetchall()
-    return render_template('blog/index.html', posts=posts)
+    return render_template('survey/index.html', surveys=surveys)
 
 @bp.route('/create', methods=('GET', 'POST'))
 def create():
@@ -35,9 +36,9 @@ def create():
                 (title, body, g.user['id'])
             )
             db.commit()
-            return redirect(url_for('blog.index'))
+            return redirect(url_for('survey.index'))
 
-    return render_template('blog/create.html')
+    return render_template('survey/create.html')
 
 def get_post(id):
     post = get_db().execute(

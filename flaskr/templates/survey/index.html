@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  {% for post in posts %}
+  {% for survey in surveys %}
     <article class="post">
       <header>
         <div>
-          <h2>{{post['question'] }}</h2>
+          <h2>{{survey['question'] }}</h2>
         </div>
       </header>
-      <p class="body">{{ post['body'] }}</p>
+      <p class="body">{{ survey['body'] }}</p>
     </article>
     {% if not loop.last %}
       <hr>
