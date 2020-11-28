@@ -87,7 +87,7 @@ header .action {
   margin-bottom: 0;
 }
 .content form {
-  margin: 1em 0;
+  margin: .5em 0;
   display: flex;
   flex-direction: column;
 }

@@ -1,17 +1,20 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
+<div style="display: flex; justify-content: space-between">
+  <div>
+    <label for="poster-name">Poster Name:</label>
+    <input type="text" id="poster-name" value="RN Association" />
+  </div>
+  <div>
+    <label for="email">Email:</label>
+    <input type="text" id="email" value="user1@gmail.com" />
+  </div>
+</div>
+<form method="POST">
   {% for survey in surveys %}
-    <article class="post">
-      <header>
-        <div>
-          <h2>{{survey['question'] }}</h2>
-        </div>
-      </header>
-      <p class="body">{{ survey['body'] }}</p>
-    </article>
-    {% if not loop.last %}
-      <hr>
-    {% endif %}
-  {% endfor %}
+  <div><label for="question{{loop.index}}">{{survey['question'] }}</label></div>
+  {% if not loop.last %}
+  <hr />
+  {% endif %} {% endfor %}
+</form>
+<input type="submit" value="Save" />
 {% endblock %}

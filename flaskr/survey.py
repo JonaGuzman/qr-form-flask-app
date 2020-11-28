@@ -6,6 +6,7 @@ from flaskr.db import get_db
 
 bp = Blueprint('survey', __name__)
 
+
 @bp.route('/')
 def index():
     db = get_db()
@@ -16,29 +17,28 @@ def index():
     ).fetchall()
     return render_template('survey/index.html', surveys=surveys)
 
-@bp.route('/create', methods=('GET', 'POST'))
+
+@bp.route('/', methods=('GET', 'POST'))
 def create():
     if request.method == 'POST':
-        title = request.form['title']
         body = request.form['body']
         error = None
 
-        if not title:
-            error = 'Title is required.'
-
         if error is not None:
             flash(error)
-        else:
-            db = get_db()
-            db.execute(
-                'INSERT INTO post (title, body, author_id)'
-                ' VALUES (?, ?, ?)',
-                (title, body, g.user['id'])
-            )
-            db.commit()
-            return redirect(url_for('survey.index'))
+        # else:
+        #     db = get_db()
+        #     db.execute(
+        #         'INSERT INTO post (title, body, author_id)'
+        #         ' VALUES (?, ?, ?)',
+        #         (title, body, g.user['id'])
+        #     )
+        #     db.commit()
+        #     return redirect(url_for('survey.index'))
 
-    return render_template('survey/create.html')
+    return render_template('index/create.html')
+
+
 
 def get_post(id):
     post = get_db().execute(
@@ -55,4 +55,3 @@ def get_post(id):
         abort(404, "Post id {0} doesn't exist.".format(id))
 
     return post
-
