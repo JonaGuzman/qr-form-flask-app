@@ -22,7 +22,7 @@ INSERT INTO questions (id, question) VALUES (7, 'How much do you like bikes?');
 -- Table: users
 CREATE TABLE users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT NOT NULL
+  email TEXT NOT NULL UNIQUE
 );
 
 -- Table: posters

@@ -18,29 +18,26 @@ def index():
     return render_template('survey/index.html', surveys=surveys)
 
 
-@bp.route('/', methods=('GET', 'POST'))
-def create():
-    if request.method == 'POST':
-        body = request.form['body']
-        error = None
+@bp.route('/response', methods=['POST'])
+def response():
+    poster_name = request.form.get("poster-name")
+    email = request.form.get("email")
+    print(email)
+    error = None
 
-        if error is not None:
-            flash(error)
-        # else:
-        #     db = get_db()
-        #     db.execute(
-        #         'INSERT INTO post (title, body, author_id)'
-        #         ' VALUES (?, ?, ?)',
-        #         (title, body, g.user['id'])
-        #     )
-        #     db.commit()
-        #     return redirect(url_for('survey.index'))
+    if error is not None:
+        flash(error)
+    else:
+        db = get_db()
+        db.execute(
+            'INSERT OR IGNORE INTO users (email)'
+            ' VALUES (?)', (email,))
+        db.commit()
+        return redirect(url_for('survey.index'))
 
-    return render_template('index/create.html')
+    return render_template("index.html", poster_name=poster_name, email=email)
 
-
-
-def get_post(id):
+def get_survey(id):
     post = get_db().execute(
         'SELECT s.id, q.question, a.answer, p.name, u.email, s.comment, p.qr_value'
         'FROM surveys AS s LEFT JOIN users_posters AS up ON up.id = s.users_posters_id'
@@ -52,6 +49,6 @@ def get_post(id):
     ).fetchone()
 
     if post is None:
-        abort(404, "Post id {0} doesn't exist.".format(id))
+        abort(404, "Survey id {0} doesn't exist.".format(id))
 
     return post
