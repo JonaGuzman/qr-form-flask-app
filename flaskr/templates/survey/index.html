@@ -10,10 +10,10 @@
       <input type="text" name="email" required/>
     </div>
   </div>
-  {% for survey in surveys %}
+  {% for question in questions %}
   <div>
-    <label for="{{survey['id'] }}">{{loop.index}}. {{survey['question'] }}</label>
-    <input type="number" id="{{survey['id'] }}" min="0" max="5" value="0"/>
+    <label for="{{question['id']}}" name="q{{question['id']}}">{{loop.index}}. {{question['question'] }}</label>
+    <input type="number" id="{{question['id'] }}" name="a-for-q{{question['id']}}" min="0" max="5" value="{{answer}}"/>
   </div>
   {% if not loop.last %}
   <hr />
