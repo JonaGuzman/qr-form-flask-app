@@ -29,7 +29,7 @@ CREATE TABLE users (
 CREATE TABLE posters (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT UNIQUE, 
-  qr_id TEXT UNIQUE, 
+  qr_id TEXT, 
   qr_value TEXT
 );
 

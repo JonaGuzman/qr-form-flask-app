@@ -1,5 +1,5 @@
 """ Utility class for preparing SQL statements """
-
+# TODO: Need to test all of these
 
 def select_query(table_name, columns_list=None, where_dict=None):
     cols = ""
@@ -16,8 +16,8 @@ def select_query(table_name, columns_list=None, where_dict=None):
 
 
 def get_id_from_tbl(table_name, where_dict, cursor):
-    cursor.execute(select_query(table_name, ["id"], where_dict))
-    id = cursor.fetchone()[0]
+    cursor.execute(select_query(table_name, ['id'], where_dict))
+    id = cursor.fetchone()['id']
     return id
 
 
@@ -55,3 +55,45 @@ def get_where_clause(col_val_dict):
             where_text += "%s = '%s' AND " % (cv, col_val_dict[cv])
         count += 1
     return where_text
+
+def select_query(table_name, columns_list=None, where_dict=None):
+    cols = ""
+    if columns_list is None or columns_list == "*":
+        cols = "*"
+    else:
+        cols = get_sql_args(columns_list, str_frmt_args=False)
+
+    sel_query = "SELECT %s FROM %s" % (cols, table_name)
+    if where_dict is None:
+        return sel_query
+    else:
+        return sel_query + get_where_clause(where_dict)
+
+def update_query(table_name, col_val_list, where_dict):
+    col_val = ""
+    for cv in col_val_list:
+        col_val += "%s = " % cv['column'] + "%s, "
+    if col_val.endswith(', '):
+        col_val = col_val.rstrip(', ')
+    return "UPDATE %s" % table_name + \
+        " SET %s" % col_val + \
+        " WHERE %s = '%s'" % (where_dict['column'], where_dict['value'])
+
+
+def get_update_values_list(col_val_list):
+    """ Helper Method for getting values for SQL Cursor Execute. Prevents SQL Injection """
+    val_list = []
+    for cv in col_val_list:
+        val_list.append(cv['value'])
+    return val_list
+
+def value_exists_in_table(table_name, where_dict, cursor):
+    sql = "SELECT COUNT(*) FROM %s" % table_name + get_where_clause(where_dict)
+    cursor.execute(sql)
+    count = cursor.fetchone()[0]
+
+    if count > 0:
+        print("Existing entry in table %s" % table_name)
+        return True
+    else:
+        return False
