@@ -11,16 +11,20 @@ bp = Blueprint('survey', __name__)
 
 @bp.route('/')
 def index():
+    return render_template('survey/index.html')
+
+@bp.route('/create', methods=['GET'])
+def create():
     db = get_db()
     questions = db.execute(
         'SELECT id, question'
         ' FROM questions'
         ' ORDER BY id'
     ).fetchall()
-    return render_template('survey/index.html', questions=questions)
+    return render_template('survey/create.html', questions=questions)
 
 
-@bp.route('/response', methods=['POST'])
+@bp.route('/create', methods=['POST'])
 def response():
     poster_name = request.form.get("poster-name")
     email = request.form.get("email")
