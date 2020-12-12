@@ -23,6 +23,34 @@ def create():
     ).fetchall()
     return render_template('survey/create.html', questions=questions)
 
+@bp.route('/<poster_name>/<email>', methods=['GET'])
+def retrieve(poster_name, email):
+    survey = get_survey(poster_name, email)
+    questions = []
+    answers = []
+    for row in survey:
+        row = tuple(row)
+        questions.append(row[1])
+        answers.append(row[2])
+    return render_template('survey/response.html', poster_name=poster_name, email=email,
+                                                    questions=questions, answers=answers)
+
+def get_survey(poster_name, email):
+    survey = get_db().execute(
+        """SELECT s.id, q.question, a.answer, p.name, u.email, s.comment, p.qr_value
+        FROM surveys s
+        LEFT JOIN users_posters up ON up.id = users_posters_id
+        LEFT JOIN answers a ON a.surveys_id = s.id
+        LEFT JOIN questions q ON q.id = a.questions_id
+        LEFT JOIN posters p ON p.id = up.posters_id
+        LEFT JOIN users u ON u.id = up.users_id
+        WHERE p.name=? AND u.email=?""",
+        (poster_name, email)
+    ).fetchall()
+    if survey is None:
+        abort(404, "Survey id {0} doesn't exist.".format(id))
+
+    return survey
 
 @bp.route('/create', methods=['POST'])
 def response():
@@ -69,21 +97,4 @@ def response():
         db.commit()
         return redirect(url_for('survey.index'))
 
-    return render_template("index.html", poster_name=poster_name, email=email)
-
-
-# def get_survey(id):
-#     survey = get_db().execute(
-#         'SELECT s.id, q.question, a.answer, p.name, u.email, s.comment, p.qr_value'
-#         'FROM surveys AS s LEFT JOIN users_posters AS up ON up.id = s.users_posters_id'
-#         'LEFT JOIN answers AS a ON a.surveys_id = s.id'
-#         'LEFT JOIN questions AS q ON q.id = a.questions_id'
-#         'LEFT JOIN posters AS p ON p.id = up.posters_id'
-#         'LEFT JOIN users AS u ON u.id = ?',
-#         (id,)
-#     ).fetchone()
-
-#     if survey is None:
-#         abort(404, "Survey id {0} doesn't exist.".format(id))
-
-#     return survey
+    return render_template("index.html")

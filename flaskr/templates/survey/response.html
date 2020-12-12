@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method="GET" action="/retrieve">
+  <div style="display: flex; justify-content: space-between;">
+    <div>
+      <label for="poster-name">Poster Name:</label>
+      <input type="text" name="poster-name" value="{{ poster_name }}"/>
+    </div>
+    <div>
+      <label for="email">Email:</label>
+      <input type="text" name="email" value="{{ email }}" />
+    </div>
+  </div>
+  {% for question in questions %}
+  <div>
+    <label for="{{questions[loop.index]}}" name="q{{questions[loop.index]}}">{{loop.index}}. {{question}}</label>
+    <input type="number" id="{{questions[loop.index] }}" name="a-for-q{{questions[loop.index]}}" min="0" max="5" value="{{answers[loop.index]}}"/>
+  </div>
+  {% if not loop.last %}
+  <hr />
+  {% endif %} {% endfor %}
+  <br>
+  <input type="submit" value="Save" />
+</form>
+{% endblock %}
