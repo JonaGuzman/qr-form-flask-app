@@ -25,15 +25,8 @@ def create():
 
 @bp.route('/<poster_name>/<email>', methods=['GET'])
 def retrieve(poster_name, email):
-    survey = get_survey(poster_name, email)
-    questions = []
-    answers = []
-    for row in survey:
-        row = tuple(row)
-        questions.append(row[1])
-        answers.append(row[2])
-    return render_template('survey/response.html', poster_name=poster_name, email=email,
-                                                    questions=questions, answers=answers)
+    surveys = get_survey(poster_name, email)
+    return render_template('survey/response.html', poster_name=poster_name, email=email, responses=surveys)
 
 def get_survey(poster_name, email):
     survey = get_db().execute(
