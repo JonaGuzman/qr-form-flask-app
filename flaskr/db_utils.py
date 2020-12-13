@@ -26,7 +26,7 @@ def insert_query(table_name, columns_list):
 
 
 def get_sql_args(values_list=None, str_frmt_args=True):
-    """ Returns string with %s for sql values execute method """
+    """ Returns string with ? for sql values execute method """
     val_args = ""
     for i in range(len(values_list)):
         if str_frmt_args:

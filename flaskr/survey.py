@@ -76,11 +76,6 @@ def update(poster_name, email):
 
         error = None
 
-        question_answer_dict = collections.OrderedDict()
-        for key, val in request.form.items():
-            if key.startswith("a-"):
-                question_answer_dict[int(key.replace('a-for-q', ''))] = int(val)
-
         if error is not None:
             flash(error)
         else:
@@ -88,13 +83,15 @@ def update(poster_name, email):
             cursor = db.cursor()
             
             survey_id = db_utils.get_survey_id(email, poster_name, cursor)
+            question_answer_dict = collections.OrderedDict()
+            for key, val in request.form.items():
+                if key.startswith("a-"):
+                    question_answer_dict[int(key.replace('a-for-q', ''))] = int(val)
 
-            # FIXME: This is setting all the answers to the same answer
             for q, a in question_answer_dict.items():
                 sql = db_utils.update_query(
-                    "answers", ["answer", "questions_id", "surveys_id"], {'surveys_id' : survey_id})
-                val = [a, q, survey_id]
-                db.execute(sql, val)
+                    "answers", ["answer"], {'surveys_id' : survey_id, 'questions_id': q})
+                db.execute(sql, [a,])
 
             db.commit()
             return redirect(url_for('survey.index'))
@@ -112,7 +109,8 @@ def get_survey(poster_name, email):
         LEFT JOIN questions q ON q.id = a.questions_id
         LEFT JOIN posters p ON p.id = up.posters_id
         LEFT JOIN users u ON u.id = up.users_id
-        WHERE p.name=? AND u.email=?""",
+        WHERE p.name=? AND u.email=?
+        ORDER BY a.questions_id""",
         (poster_name, email)
     ).fetchall()
     if survey is None:
