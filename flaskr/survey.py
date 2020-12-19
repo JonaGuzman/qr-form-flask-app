@@ -68,8 +68,9 @@ def create():
     return render_template('survey/create.html', questions=questions)
 
 
-@bp.route('/<poster_name>/<email>', methods=('GET', 'POST'))
-def update(poster_name, email):
+@bp.route('/<poster_name>/', methods=('GET', 'POST'))
+@bp.route('/<poster_name>/<path:email>', methods=('GET', 'POST'))
+def update(poster_name, email=None):
     if request.method == 'POST':
         poster_name = request.form.get("poster-name")
         email = request.form.get("email")
@@ -97,6 +98,7 @@ def update(poster_name, email):
             return redirect(url_for('survey.index'))
     else:        
         surveys = get_survey(poster_name, email)
+        # TODO: Pass in Question and Answer values into surveys when going to site/poster_name
         return render_template('survey/update.html', poster_name=poster_name, email=email, responses=surveys)
 
 
