@@ -13,8 +13,12 @@ bp = Blueprint('survey', __name__)
 def index():
     return render_template('survey/index.html')
 
+@bp.route('/create/<path:poster_name>', methods=('GET', 'POST'))
+@bp.route('/<path:poster_name>', methods=('GET', 'POST'))
 @bp.route('/create', methods=('GET', 'POST'))
-def create():
+def create(poster_name=None):
+    if poster_name is not None:
+        poster_name = poster_name.replace("/","")
     if request.method == 'POST':
         poster_name = request.form.get("poster-name")
         email = request.form.get("email")
@@ -30,9 +34,13 @@ def create():
         else:
             db = get_db()
             cursor = db.cursor()
-            db.execute(db_utils.insert_query('users', ['email']), (email,))
-            db.execute(db_utils.insert_query(
-                'posters', ['name', 'qr_id', 'qr_value']), (poster_name, 'qr122', ''))
+            
+            if not db_utils.value_exists_in_table("users", {"email": email}, cursor):
+                db.execute(db_utils.insert_query('users', ['email']), (email,))
+            
+            if not db_utils.value_exists_in_table("posters", {"name": poster_name}, cursor):
+                db.execute(db_utils.insert_query(
+                    'posters', ['name', 'qr_id', 'qr_value']), (poster_name, 'qr122', ''))
 
             user_id = db_utils.get_id_from_tbl("users", {"email": email}, cursor)
             poster_id = db_utils.get_id_from_tbl(
@@ -40,7 +48,9 @@ def create():
             if not db_utils.value_exists_in_table("users_posters", {"users_id": user_id, "posters_id": poster_id}, cursor):
                 db.execute(db_utils.insert_query("users_posters", ['users_id', 'posters_id']), [
                     user_id, poster_id])
-
+            else:
+                flash('%s and %s entry exist. Please update values now' % (poster_name, email))
+                return redirect(url_for('survey.update', poster_name=poster_name, email=email))
             users_posters_id = db_utils.get_id_from_tbl(
                 "users_posters", {"users_id": user_id, "posters_id": poster_id}, cursor)
 
@@ -65,11 +75,10 @@ def create():
         ' FROM questions'
         ' ORDER BY id'
     ).fetchall()
-    return render_template('survey/create.html', questions=questions)
+    return render_template('survey/create.html', poster_name=poster_name, questions=questions)
 
 
-@bp.route('/<poster_name>/', methods=('GET', 'POST'))
-@bp.route('/<poster_name>/<path:email>', methods=('GET', 'POST'))
+@bp.route('/<poster_name>/<email>', methods=('GET', 'POST')) 
 def update(poster_name, email=None):
     if request.method == 'POST':
         poster_name = request.form.get("poster-name")
@@ -99,6 +108,19 @@ def update(poster_name, email=None):
     else:        
         surveys = get_survey(poster_name, email)
         # TODO: Pass in Question and Answer values into surveys when going to site/poster_name
+        if len(surveys) == 0:
+            db = get_db()
+            questions = db.execute(
+                'SELECT id, question'
+                ' FROM questions'
+                ' ORDER BY id'
+            ).fetchall()
+            questions_list = []
+            for s in questions:
+                questions_list.append(tuple(s))
+            if db_utils.value_exists_in_table("posters", {"name" : poster_name}, db.cursor()):
+                return redirect(url_for('survey.create', poster_name=poster_name, questions=questions_list))
+            
         return render_template('survey/update.html', poster_name=poster_name, email=email, responses=surveys)
 
 

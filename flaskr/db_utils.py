@@ -1,6 +1,7 @@
 """ Utility class for preparing SQL statements """
 # TODO: Need to test all of these
 
+
 def select_query(table_name, columns_list=None, where_dict=None):
     cols = ""
     if columns_list is None or columns_list == "*":
@@ -22,7 +23,7 @@ def get_id_from_tbl(table_name, where_dict, cursor):
 
 
 def insert_query(table_name, columns_list):
-    return "INSERT OR IGNORE INTO %s (%s)" % (table_name, ', '.join(columns_list)) + " VALUES (%s)" % get_sql_args(columns_list)
+    return "INSERT INTO %s (%s)" % (table_name, ', '.join(columns_list)) + " VALUES (%s)" % get_sql_args(columns_list)
 
 
 def get_sql_args(values_list=None, str_frmt_args=True):
