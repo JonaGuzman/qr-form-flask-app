@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method="POST" action="/add_poster">
+  <div style="display: flex; justify-content: space-between;">
+    <div>
+      <label for="poster-name">Poster Name:</label>
+      <input type="text" name="poster-name" value="{{ poster_name }}" required/>
+      <input type="submit" value="Create Poster" />
+    </div>
+  </div>
+  {% if img_file is not none %}
+  <div>
+    <img src="{{ url_for('static', filename='images/') }}{{  img_file  }}"></img>
+    <div style="text-align: left;">
+      Download <a href="{{ url_for('static', filename='images/') }}{{  img_file  }}" download>{{ img_file  }}</a>
+    </div>
+  </div>
+ 
+  {% endif %}
+</form>
+{% endblock %}

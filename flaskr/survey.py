@@ -5,6 +5,7 @@ from werkzeug.exceptions import abort
 from flaskr.db import get_db
 from flaskr import db_utils
 import collections
+import qrcode
 
 bp = Blueprint('survey', __name__)
 
@@ -12,6 +13,29 @@ bp = Blueprint('survey', __name__)
 @bp.route('/')
 def index():
     return render_template('survey/index.html')
+
+@bp.route('/add_poster', methods=('GET', 'POST'))
+def add_poster():
+    if request.method == 'POST':
+        poster_name = request.form.get("poster-name")
+        error = None
+        if error is not None:
+            flash(error)
+        else:
+            db = get_db()
+            cursor = db.cursor()
+            if not db_utils.value_exists_in_table("posters", {"name": poster_name}, cursor):
+                db.execute(db_utils.insert_query(
+                    'posters', ['name', 'qr_id', 'qr_value']), (poster_name, 'qr122', ''))
+                img = qrcode.make('%s%s' % (request.url_root, poster_name))
+                poster_file_name = 'qr_code_%s.png' % poster_name.replace(" ", "_")
+                img.save('flaskr/static/images/%s' % poster_file_name)
+                return render_template('survey/add_poster.html', img_file=poster_file_name)
+            else:
+                flash("Poster name %s already exists" % poster_name)
+            return redirect(url_for('survey.index'))
+    return render_template('survey/add_poster.html', img_file=None)
+
 
 @bp.route('/create/<path:poster_name>', methods=('GET', 'POST'))
 @bp.route('/<path:poster_name>', methods=('GET', 'POST'))
