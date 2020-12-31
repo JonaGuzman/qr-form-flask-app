@@ -172,7 +172,6 @@ def get_survey(poster_name, email):
 
     return survey
 
-
 @bp.route('/get_all_surveys')
 def get_all_surveys():
     headers = ['id', 'email', 'Poster Name']
@@ -180,7 +179,7 @@ def get_all_surveys():
         "SELECT * FROM questions", get_db())['question'].values.tolist()
     headers.extend(questions)
 
-    survey_view = get_db().execute("""DROP VIEW IF EXISTS survey_view""")
+    get_db().execute("""DROP VIEW IF EXISTS survey_view""")
     survey_view = get_db().execute(
         """CREATE VIEW survey_view (id, question, answer, name, email, comment, qr_value) AS
         SELECT s.id, q.question, a.answer, p.name, u.email, s.comment, p.qr_value
@@ -193,17 +192,11 @@ def get_all_surveys():
         ORDER BY q.id""")
     surveys = pandas.read_sql_query(
         """SELECT id, email, name,
-        max(case when seq = 1 then answer end) as 'How much do you like cars?',
-        max(case when seq = 2 then answer end) as 'How much do you like planes?',
-        max(case when seq = 3 then answer end) as 'How much do you like halo?',
-        max(case when seq = 4 then answer end) as 'How much do you like mario?',
-        max(case when seq = 5 then answer end) as 'How much do you like pizza?',
-        max(case when seq = 6 then answer end) as 'How much do you like vegetables?',
-        max(case when seq = 7 then answer end) as 'How much do you like bikes?'
+        %s
         FROM (
             SELECT survey_view.*,
             row_number() over (partition by email order by id) as seq
             from survey_view
             ) survey_view
-            GROUP BY email""", get_db())
+            GROUP BY email""" % db_utils.prep_case_seq(questions), get_db())
     return render_template('survey/get_all_surveys.html', headers=headers, surveys=surveys.values.tolist())

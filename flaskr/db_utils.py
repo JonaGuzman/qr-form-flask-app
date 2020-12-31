@@ -98,3 +98,12 @@ def get_survey_id(email, poster_name, cursor):
     posters_id = get_id_from_tbl('posters', {'name': poster_name}, cursor)
     up_id = get_id_from_tbl('users_posters',{'users_id': users_id, 'posters_id': posters_id}, cursor)
     return get_id_from_tbl('surveys', {'users_posters_id': up_id}, cursor)
+
+def prep_case_seq(questions_list):
+    count = 1
+    str = ""
+    for q in range(0, len(questions_list)):
+        endline = "," if count != len(questions_list) else ""
+        str += "max(case when seq = %d then answer end) as \'%s\'%s\n" % (count, questions_list[q], endline)
+        count += 1
+    return str
