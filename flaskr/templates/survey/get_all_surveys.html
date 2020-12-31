@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<title>{% block title %}{% endblock %} - Flaskr</title>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='stylesheets/style.css') }}"
+/>
+<body class="survey-table">
+<nav>
+  <h1>QR-Form-App</h1>
+</nav>
+{% block content %}
+<table>
+  <tr>
+    {% for cell in headers %}
+    <th>{{cell}}</th>
+    {% endfor %}
+  </tr>
+  <tr></tr>
+  {% for survey in surveys %}
+  <tr>
+    {% for answer in survey %}
+    <td class="cell">{{answer}}</td>
+    {% if not loop.last %} {% endif %} {% endfor %}
+  </tr>
+  {% endfor %} {% endblock %}
+</table>
+<a href="{{  url_for('survey.index')  }}">Back to Home</a>
+</body>

@@ -110,3 +110,27 @@ input[type="submit"] {
   align-self: start;
   min-width: 10em;
 }
+
+.survey-table {
+  max-width: 100% !important;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: auto;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.cell {
+  text-align: center !important;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}

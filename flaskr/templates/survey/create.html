@@ -4,7 +4,7 @@
   <div style="display: flex; justify-content: space-between;">
     <div>
       <label for="poster-name">Poster Name:</label>
-      <input type="text" name="poster-name" required/>
+      <input type="text" name="poster-name" value="{{ poster_name if poster_name != None else ''}}" required/>
     </div>
     <div>
       <label for="email">Email:</label>
