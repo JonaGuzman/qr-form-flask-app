@@ -1,9 +1,6 @@
-. venv/bin/activate
-flask init-db
-export FLASK_APP=flaskr
-export FLASK_ENV=development
-cur = db.cursor()
-        cur.execute('SELECT * FROM users')
-        row = cur.fetchall()
-        for r in row:
-            print(tuple(r))
+# QR Code Flask Web App
+
+Proof of Concept for a ways to have users at a convention or science fair to score presentations.
+Used for storing surveys in a database.
+Users can create responses to surveys using a predefined set of questions.
+A QR Image could be created to retrieve an empty survey for a given poster name (presentation)
