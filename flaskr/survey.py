@@ -26,7 +26,7 @@ def add_poster():
             flash(error)
         else:
             db = get_db()
-
+            
             if not db_utils.check_if_value_in_table("posters", {"name": poster_name}):
                 db.execute(
                     db_utils.insert_query_str(

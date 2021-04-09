@@ -48,7 +48,6 @@ def get_where_clause(col_val_dict):
             where_text += f"{cv} = {val} AND "            
         else:
             where_text += f"{cv} = {val}"
-
     return where_text
 
 
